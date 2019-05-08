@@ -12,4 +12,13 @@ describe("routes : static", () => {
     });
     
   });
+  describe("GET /macro", ()=> {
+  	it("should return a status code of 200", (done) => {
+  		request.get(base + 'macro', (err, res, body) => {
+  			expect(res.statusCode).toBe(200);
+  			expect(body).toBe("polo");
+  			done();
+  		});
+  	});
+  })
 });
