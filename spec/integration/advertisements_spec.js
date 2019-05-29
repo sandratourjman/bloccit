@@ -1,53 +1,56 @@
 const request = require("request");
 const server = require("../../src/server");
-const base = "http://localhost:3000/advertisements/";
+const base = "http://localhost:3000/topics";
+
 const sequelize = require("../../src/db/models/index").sequelize;
-const Advertisement = require("../../src/db/models").Advertisements;
+const Topic = require("../../src/db/models").Topic;
+const Post = require("../../src/db/models").Post;
 
-describe("routes : advertisements", () => {
-	beforeEach((done) => {
-		this.advertisement;
-		sequelize.sync({force: true}).then((res) => {
-	       Advertisement.create({
-	         title: "Test Advert",
-	         description: "Test advertisements"
-	       })
-	        .then((advertisement) => {
-	          this.advertisement = advertisement;
-	          done();
-	        })
-	        .catch((err) => {
-	          console.log(err);
-	          done();
-	        });
-		});
-	});	
+describe("routes : posts", () => {
 
-  	describe("GET /advertisements", () => {
-    	it("should return a status code 200 and all advertisements", (done) => {
-    		request.get(base, (err, res, body) => {
-	        	expect(res.statusCode).toBe(200);
-	         	expect(err).toBeNull();
-	         	expect(body).toContain("Advertisements");
-	         	expect(body).toContain("Test Advert");
-	         	done();
-    		});
-    	});
-  	});
+  beforeEach((done) => {
+    this.topic;
+    this.post;
 
-  	describe("GET /advertisements/new", () => {
-  		it("should render a new advertisement form", (done) => {
-  			request.get(`${base}new`, (err, res, body) => {
-          expect(err).toBeNull();
-          expect(body).toContain("New Advertisement");
+    sequelize.sync({force: true}).then((res) => {
+
+      Topic.create({
+        title: "Winter Games",
+        description: "Post your Winter Games stories."
+      })
+      .then((topic) => {
+        this.topic = topic;
+
+        Post.create({
+          title: "Snowball Fighting",
+          body: "So much snow!",
+          topicId: this.topic.id
+        })
+        .then((post) => {
+          this.post = post;
           done();
-  			});
-  		});
-  	});
+        })
+        .catch((err) => {
+          console.log(err);
+          done();
+        });
+      });
+    });
+  });
 
-    describe("POST /advertisements/create", () => {
-      const options = {
-        url: `${base}create`,
+  describe("GET /topics/:topicId/posts/new", () => {
+    it("should render a new post form", (done) => {
+      request.get(`${base}/${this.topic.id}/posts/new`, (err, res, body) => {
+        expect(err).toBeNull();
+        expect(body).toContain("New Post");
+        done();
+      });
+    });
+  });
+
+  describe("POST /advertisements/create", () => {
+    const options = {
+      url: `${base}create`,
         form: {
           title: "Wildfire Advert",
           description: "Smokey the Bear is here to teach you about wildfires."
@@ -75,7 +78,7 @@ describe("routes : advertisements", () => {
       });
     });
 
-    describe("GET /advertisements/:id", () => {
+  describe("GET /advertisements/:id", () => {
      it("should render a view with the selected advertisement", (done) => {
        request.get(`${base}${this.advertisement.id}`, (err, res, body) => {
          expect(err).toBeNull();
