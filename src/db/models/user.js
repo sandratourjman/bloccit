@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     	type: DataTypes.STRING,
     	allowNull: false
     },
-
     role: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -29,5 +28,6 @@ module.exports = (sequelize, DataTypes) => {
   User.prototype.isAdmin = function() {
      return this.role === "admin";
    };
+   
   return User;
 };

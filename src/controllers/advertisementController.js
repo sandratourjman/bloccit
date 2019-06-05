@@ -4,9 +4,9 @@ module.exports = {
   index(req, res, next){
     advertisementQueries.getAllAdvertisements((err, advertisements) => {
     	if(err){
-    		res.redirect(500, "static/index");
+    		res.redirect(500, "static/index", { advertisements });
     	} else {
-    		res.render("advertisements/index", {advertisements});
+    		res.render("advertisements/index", { advertisements });
     	}
     });
   },
@@ -33,7 +33,7 @@ module.exports = {
       if(err || advertisement == null){
         res.redirect(404, "/");
       } else {
-        res.render("advertisements/show", {advertisement});
+        res.render("advertisements/show", { advertisement });
       }
     });
    },
@@ -53,7 +53,7 @@ module.exports = {
        if(err || advertisement == null){
          res.redirect(404, "/");
        } else {
-         res.render("advertisements/edit", {advertisement});
+         res.render("advertisements/edit", { advertisement });
        }
      });
    },

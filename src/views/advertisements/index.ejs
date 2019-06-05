@@ -4,10 +4,12 @@
     <% include ../static/partials/head.ejs %>
   </head>
   <body>
+    <% include ../static/partials/navbar.ejs %>
     <main class="container">
-      <% include ../static/partials/navbar.ejs %>
 
       <h1>Advertisements</h1>
+      <a href="/advertisements/new" 
+      class="btn btn-primary btn-lg">New Advertisement</a>
 
       <ul class="list-group">
         <% advertisements.forEach((advertisement) => { %>

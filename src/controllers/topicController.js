@@ -30,10 +30,11 @@ module.exports = {
          description: req.body.description
        };
        topicQueries.addTopic(newTopic, (err, topic) => {
+
          if(err){
            res.redirect(500, "topics/new");
          } else {
-           res.redirect(303, `/topics/${topic.id}`);
+           res.redirect(303, `/topics/${topic.id}`);  
          }
        });
      } else {
@@ -56,7 +57,7 @@ module.exports = {
        if(err){
          res.redirect(err, `/topics/${req.params.id}`)
        } else {
-         res.redirect(303, "/topics")
+         res.redirect(303, "/topics");
        }
      });
   },

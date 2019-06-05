@@ -117,7 +117,7 @@ describe("routes : posts", () => {
     it("should delete the post with the associated ID", (done) => {
       expect(this.post.id).toBe(1);
       request.post(`${base}/${this.topic.id}/posts/${this.post.id}/destroy`, (err, res, body) => {
-        Post.findById(1)
+        Post.findByPk(1)
         .then((post) => {
           expect(err).toBeNull();
           expect(post).toBeNull();
