@@ -90,7 +90,6 @@ describe("routes : topics", () => {
               where: {title: "blink-182 songs"}
             })
             .then((topic) => {
-
               expect(res.statusCode).toBe(303);
               expect(topic.title).toBe("blink-182 songs");
               expect(topic.description).toBe("What's your favorite blink-182 song?");
@@ -200,9 +199,9 @@ describe("routes : topics", () => {
 
     });
 
- }); // end of context for admin user
+  }); // end of context for admin user
 
- describe("member user performing CRUD actions for Topic", () => {
+  describe("member user performing CRUD actions for Topic", () => {
 
     beforeEach((done) => {
        request.get({
@@ -233,10 +232,10 @@ describe("routes : topics", () => {
 
     describe("GET /topics/new", () => {
 
-      it("should render a new topic form", (done) => {
+      it("should NOT render a new topic form, but redirect to topics view", (done) => {
         request.get(`${base}new`, (err, res, body) => {
           expect(err).toBeNull();
-          expect(body).toContain("New Topic");
+          expect(body).toContain("Topics");
           done();
         });
       });
@@ -252,7 +251,7 @@ describe("routes : topics", () => {
         }
       };
 
-      it("should create a new topic and redirect", (done) => {
+      it("should not create a new topic", (done) => {
         request.post(options,
           (err, res, body) => {
 
@@ -260,14 +259,7 @@ describe("routes : topics", () => {
               where: { title: "blink-182 songs" }
             })
             .then((topic) => {
-
-              console.log("topics spec logger");
-              // console.log(JSON.stringify(topic));
-              console.log(res.statusCode);
-
-              expect(res.statusCode).toBe(303);
-              expect(topic.title).toBe("blink-182 songs");
-              expect(topic.description).toBe("What's your favorite blink-182 song?");
+              expect(topic).toBeNull(); // no topic should be returned
               done();
             })
             .catch((err) => {
@@ -275,30 +267,7 @@ describe("routes : topics", () => {
               done();
             });
           });
-      });
-
-      it("should not create a new post that fails validations", (done) => {
-        const options = {
-          url: `${base}create`,
-          form: {
-            title: "a",
-            body: "b"
-          }
-        };
-        request.post(options, (err, res, body) => {
-          Topic.findOne({
-            where: { title: "a" }
-          })
-          .then((post) => {
-            expect(post).toBeNull();
-            done();
-          })
-          .catch((err) => {
-            console.log(err);
-            done();
-          });
-        });
-      });
+      });  
 
     });
 
@@ -317,15 +286,17 @@ describe("routes : topics", () => {
     describe("POST /topics/:id/destroy", () => {
 
      it("should delete the topic with the associated ID", (done) => {
+
        Topic.findAll()
        .then((topics) => {
          const topicCountBeforeDelete = topics.length;
          expect(topicCountBeforeDelete).toBe(1);
+
          request.post(`${base}${this.topic.id}/destroy`, (err, res, body) => {
            Topic.findAll()
            .then((topics) => {
-             expect(err).toBeNull();
-             expect(topics.length).toBe(topicCountBeforeDelete - 1);
+             
+             expect(topics.length).toBe(topicCountBeforeDelete);
              done();
            });
          });
@@ -336,10 +307,10 @@ describe("routes : topics", () => {
     });
 
     describe("GET /topics/:id/edit", () => {
-     it("should render a view with an edit topic form", (done) => {
+     it("should NOT render a view with an edit topic form", (done) => {
        request.get(`${base}${this.topic.id}/edit`, (err, res, body) => {
          expect(err).toBeNull();
-         expect(body).toContain("Edit Topic");
+         expect(body).not.toContain("Edit Topic");
          expect(body).toContain("JS Frameworks");
          done();
        });
@@ -351,7 +322,7 @@ describe("routes : topics", () => {
         const options = {
            url: `${base}${this.topic.id}/update`,
            form: {
-             title: "JS Frameworks",
+             title: "JavaScript Frameworks",
              description: "There are a lot of them"
            }
          };
@@ -361,7 +332,7 @@ describe("routes : topics", () => {
            expect(err).toBeNull();
 
            Topic.findOne({
-             where: { id: this.topic.id }
+             where: { id: 1 }
            })
            .then((topic) => {
              expect(topic.title).toBe("JS Frameworks");
