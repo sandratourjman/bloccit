@@ -157,6 +157,17 @@ describe("routes : users", () => {
        });
 
      });
+
+     it("should present a list of posts a user has favorited", (done) => {
+
+      request.get(`${base}${this.user.id}`, (err, res, body) => {
+         expect(body).toContain("Favorites");
+         expect(body).toContain("Snowball Fighting");
+         expect(body).toContain("This comment is alright.")
+         done();
+       });
+
+     });
   });
 
 });
