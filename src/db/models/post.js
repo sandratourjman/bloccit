@@ -39,6 +39,11 @@ module.exports = (sequelize, DataTypes) => {
      as: "favorites"
     });
 
+    Post.hasMany(models.Vote, {
+      foreignKey: "postId",
+      as: "votes"
+    });
+
     Post.afterCreate((post, callback) => {
      return models.Favorite.create({
        userId: post.userId,
@@ -46,9 +51,12 @@ module.exports = (sequelize, DataTypes) => {
      });
     });
 
-    Post.hasMany(models.Vote, {
-      foreignKey: "postId",
-      as: "votes"
+    Post.afterCreate((post, callback) => {
+     return models.Vote.create({
+       userId: post.userId,
+       postId: post.id,
+       value: 1
+     });
     });
   };
   Post.prototype.getPoints = function(){
