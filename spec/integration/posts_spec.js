@@ -108,7 +108,7 @@ describe("routes : posts", () => {
       });    
     });
 
-    // guest view only
+    
     describe("GET /topics/:topicId/posts/:id", () => {
       it("should render a view with the selected post", (done) => {
         request.get(`${base}/${this.topic.id}/posts/${this.post.id}`, (err, res, body) => {

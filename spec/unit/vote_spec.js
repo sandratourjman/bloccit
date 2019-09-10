@@ -109,10 +109,6 @@ describe("Vote", () => {
        })
        .then((vote) => {
 
-        // the code in this block will not be evaluated since the validation error
-        // will skip it. Instead, we'll catch the error in the catch block below
-        // and set the expectations there
-
          done();
 
        })
@@ -124,6 +120,21 @@ describe("Vote", () => {
 
        })
      });
+
+     it("should not create a vote other than 1 or -1 on a post for a user", (done) => {
+          Vote.create({
+            value: 0,
+            postId: this.post.id,
+            userId: this.user.id
+          })
+          .then((vote) => {
+            done();
+          })
+          .catch((err) => {
+            expect(err.message).toContain("Validation isIn on value failed");
+            done();
+          });
+      });
 
   });
 
@@ -246,6 +257,48 @@ describe("Vote", () => {
        });
      });
 
+  });
+
+  describe("#hasUpvoteFor()", () => {
+      it("should return true if user has an upvote on this post", (done) => {
+        Vote.create({
+          value: 1,
+          postId: this.post.id,
+          userId: this.user.id
+        })
+        .then((vote) => {
+          this.post.votes = [vote];
+          const hasUpvote = this.post.hasUpvoteFor(vote.userId);
+          expect(hasUpvote).toBe(true);
+          done();
+        })
+        .catch((err) => {
+          console.log(err);
+          done();
+        });
+      });
+
+  });
+
+  describe("#hasDownvoteFor()", () => {
+    it("should return true if user has an downvote on this post", (done) => {
+      Vote.create({
+        value: -1,
+        postId: this.post.id,
+        userId: this.user.id
+      })
+      .then((vote) => {
+        this.post.votes = [vote];
+        const hasDownvote = this.post.hasDownvoteFor(vote.userId);
+        expect(hasDownvote).toBe(true);
+        done();
+      })
+      .catch((err) => {
+        console.log(err);
+        done();
+      });
+    });
+    
   });
 
 });
